@@ -9,15 +9,6 @@ import logging
 from datetime import datetime
 import sys
 
-"""
-Para el dataset COCO: utilidad que pinte todos los bounding box de todos los image_ids asociados a un mismo filename.
-
-Elegir por parámetros si queremos mostrar el resultado o no por pantalla, y si queremos guardar las imágenes con los bboxes dibujados en disco o no.
-
-Entrada: un filename, una lista de filenames, un path a una carpeta con las imágenes o un fichero CSV con los filenames
-Salida: la imagen por pantalla (si se pone a True el parámetro correspondiente) y la imagen guardada en disco (si se pone a True el parámetro correspondiente)
-"""
-
 date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
 
 FORMAT = '%(asctime)s %(message)s'
@@ -71,7 +62,7 @@ def get_annotation(img_name, images_coco, annot_coco):
 
 
 def draw_bboxes(image, boxes, label):
-    " function that draw bounding boxes onto the image given and add score, category"
+    # function that draw bounding boxes onto the image given and add score, category
     [x1, y1, w, h] = [int(boxes[0]), int(boxes[1]), int(boxes[2]), int(boxes[3])]
     c1 = (x1, y1)
     c2 = (x1 + w, y1 + h)
@@ -106,8 +97,10 @@ def get_filenames(filename_list, from_csv, input_dir):
 
 
 def main(annot_path, output_dir, images_dir, filename_list, from_csv, input_dir, show):
-    # main functions that get filenames list then load coco annotations file,
-    # and loop into filenames list to all annotations for the same filename taking in account the duplicate, and draw bboxes
+    """
+    main functions that get filenames list then load coco annotations file,
+    loop into filename_list and get all annotations for the same filename taking in account the duplicate, and draw bboxes
+    """
     if not os.path.isdir(images_dir):
         logging.error(f"{images_dir} does not exist")
         sys.exit()

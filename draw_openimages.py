@@ -9,18 +9,6 @@ import logging
 from datetime import datetime
 import sys
 
-"""
-Para el dataset OpenImages: utilidad que pinte todos los bounding box de un filename que se pase por argumento.
-Esta utilidad debe mirar en todas las carpetas con prefijo “open-images-v6“
-
-Elegir por parámetros si queremos mostrar el resultado o no por pantalla, 
-y si queremos guardar las imágenes con los bboxes dibujados en disco o no.
-
-Entrada: un filename, una lista de filenames, un path a una carpeta con las imágenes o un fichero CSV con los filenames, 
-y el prefijo del dataset donde mirar (en este caso, “open-images-v6“)
-Salida: la imagen por pantalla (si se pone a True el parámetro correspondiente) y la imagen guardada en disco (si se pone a True el parámetro correspondiente)
-"""
-
 date = datetime.now().strftime("%Y_%m_%d-%I:%M:%S_%p")
 
 FORMAT = '%(asctime)s %(message)s'
@@ -74,8 +62,8 @@ def construct_path(open_imesges_path, prefixe, category, split):
 
 
 def check_image_in_dir(open_images_path, fn, category_list, split_list, prefixe):
-    # check if the image given is present in the different dataset of open-images (cat, dog, person)/(train, test, val)
-    # return a list of the different dataset taht contains the image
+    """ check if the image given is present in the different dataset of open-images (cat, dog, person)/(train, test, val)
+    return a list of the different dataset taht contains the image"""
     list_path = []
     for category in category_list:
         for split in split_list:
@@ -127,9 +115,10 @@ def get_filenames(filename_list, from_csv, input_dir):
         sys.exit()
     return filenames
 
+
 def draw_from_yolo(fn, all_filepaths, output_dir, show, image):
-    # read annotations from yolo format
-    # get all annotations for this image , looking into the different dataset inside all_filepaths
+    """ read annotations from yolo format
+    get all annotations for this image , looking into the different dataset inside all_filepaths """
     list_annot = check_yolo_annotation(all_filepaths, fn)
     if len(list_annot) > 0:
         for annot in list_annot:
@@ -147,7 +136,8 @@ def draw_from_yolo(fn, all_filepaths, output_dir, show, image):
     else:
         logging.info(f"image {fn} has no annotations in any dataset of {prefixe}")
 
-def check_open_annotation(annotations,fn):
+
+def check_open_annotation(annotations, fn):
     # check in train/test/val annotations file, if filename has annotation
     value = True
     if fn not in list(annotations['ImageID']):
@@ -156,23 +146,24 @@ def check_open_annotation(annotations,fn):
 
     return value
 
+
 def draw_from_open_images(annotation, fn, mapping_label, output_dir, show, image):
     # check annotations for filename
     fn = os.path.splitext(fn)[0]
-    value = check_open_annotation(annotation,fn)
+    value = check_open_annotation(annotation, fn)
 
     if value:
         h, w, _ = image.shape
         # get all annotations for one filename
-        annot = annotation[annotation['ImageID']==fn]
+        annot = annotation[annotation['ImageID'] == fn]
         for index, row in annot.iterrows():
             # get bboxes label and draw
-            bboxe = [float(row['XMin'])*w, float(row['YMin'])*h, float(row['XMax'])*w, float(row['YMax'])*h]
-            label = mapping_label[mapping_label['ID']== row['LabelName']]['label'].values[0]
+            bboxe = [float(row['XMin']) * w, float(row['YMin']) * h, float(row['XMax']) * w, float(row['YMax']) * h]
+            label = mapping_label[mapping_label['ID'] == row['LabelName']]['label'].values[0]
             draw_bboxes(bboxe, image, label)
         # save image drawn
         if output_dir:
-            output_path = os.path.join(output_dir, fn+'.jpg')
+            output_path = os.path.join(output_dir, fn + '.jpg')
             cv2.imwrite(output_path, image)
             # show image drawn
         if show:
@@ -181,10 +172,11 @@ def draw_from_open_images(annotation, fn, mapping_label, output_dir, show, image
     else:
         logging.error(f"image: {fn} has no annotations")
 
+
 def main(open_images_path, output_dir, filename_list, from_csv, input_dir, show, prefixe, from_open_images):
-    # main functions that get filenames list,  then loop into it
-    #  for each image get all paths of open-images dataset tant contain it
-    # finally choose whereas read from yolo or open images annotations and draw it
+    """ main functions that get filenames list,  then loop into it
+      for each image get all paths of open-images dataset tant contain it
+     finally choose whereas read from yolo or open images annotations and draw it """
     if output_dir and not os.path.exists(output_dir):
         print('creating dir')
         os.makedirs(output_dir)
@@ -212,8 +204,8 @@ def main(open_images_path, output_dir, filename_list, from_csv, input_dir, show,
         else:
             draw_from_yolo(fn, all_filepaths, output_dir, show, image)
 
-if __name__ == "__main__":
 
+if __name__ == "__main__":
     args = draw_args()
     open_images_path = args.open_images_path
     output_dir = args.output_dir
@@ -224,4 +216,4 @@ if __name__ == "__main__":
     prefixe = args.open_images_prefixe
     from_open_images = args.from_open_images
 
-    main(open_images_path, output_dir, filename_list, from_csv, input_dir, show, prefixe,from_open_images)
+    main(open_images_path, output_dir, filename_list, from_csv, input_dir, show, prefixe, from_open_images)
