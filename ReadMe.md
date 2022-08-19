@@ -17,33 +17,33 @@ This project aims two goals:
 
 1. Draw functions
 
-You can pass images to be drawn, as a list, as a csv file, or as a path to images, respectively to the argument (--filename_list --from_csv --input_dir)
+You can pass images to be drawn in parameter, as a list, as a csv file, or as a path to images, respectively to the argument (--filename_list --from_csv --input_dir)
 you can choose if you want to save or show on screen the images drawn with
 --output_dir and --show
 
-For example give filename as csv file with coco annotations:
+For example pass a csv file as input, draw with coco annotations and save into directory:
 
 ```
 python draw_coco.py path_annotations_coco path_images_dir --from_csv filename.csv
 --show True --output_dir resdraw_coco/
 
 ```
-with open_images annotations and filenames given as a list
+This time draw with open-images annotations and pass a list of filename as input
 
 ```
 pyhton draw_openimages.py datastore open-images-v6
---output_dir
-resdraw_open --from_open_images oidv6-train-annotations-bbox.csv
+--from_open_images path_to open_images_annotations
 --filename_list bd4e54f41185b488.jpg 0cac3c05d359ef3a.jpg 67a4071d76d28bc5.jpg
 ```
-with yolo annotations and path to directory as input
+
+Finally with yolo annotations and input as a path to directory
 
 ```
 pyhton draw_openimages.py datastore open-images-v6
 --output_dir resdraw_open --input_dir datastore/open-images-v6-cat/raw/1/train/cat
 ```
 
-2. find duplicate
+2. Find duplicate
 
 This script find images that are stored in more than one open_images dataset,
 (open-images-v6-cat, open-images-v6-dog, open-images-v6-person)
